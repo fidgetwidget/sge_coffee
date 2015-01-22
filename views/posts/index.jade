@@ -1,0 +1,11 @@
+extends ../layouts/layout
+block content
+  .container
+    - each post in posts
+      .row
+        .nine.columns
+          h6 
+            a(href='#') post.title
+        .three.columns
+          a(href="#").button button
+    
