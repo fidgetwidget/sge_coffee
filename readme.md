@@ -6,6 +6,7 @@ My priority is on the things I need for the demos and prototypes I make, but I a
 interested in feedback and welcome participation to make this better for anyone 
 wanting to use it.
 
+The files for the game are in assets/js 
 
 ## Technologies
 
