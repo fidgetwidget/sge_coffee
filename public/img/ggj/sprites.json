@@ -1,0 +1,90 @@
+{
+"frames": {
+	"leftWallPiece.png": {
+		"frame": {"x":99, "y":130, "w":32, "h":96},
+		"spriteSourceSize": {"x":0,"y":0,"w":32,"h":96},
+		"sourceSize": {"w":32,"h":96}
+	},
+	"obs_leftEdgeLeft.png": {
+		"frame": {"x":149, "y":179, "w":6, "h":47},
+		"spriteSourceSize": {"x":10,"y":0,"w":16,"h":48},
+		"sourceSize": {"w":16,"h":48}
+	},
+	"obs_leftEdgeRight.png": {
+		"frame": {"x":149, "y":130, "w":16, "h":48},
+		"spriteSourceSize": {"x":0,"y":0,"w":16,"h":48},
+		"sourceSize": {"w":16,"h":48}
+	},
+	"obs_leftWallJoin.png": {
+		"frame": {"x":0, "y":196, "w":32, "h":48},
+		"spriteSourceSize": {"x":0,"y":0,"w":32,"h":48},
+		"sourceSize": {"w":32,"h":48}
+	},
+	"obs_middle.png": {
+		"frame": {"x":132, "y":179, "w":16, "h":48},
+		"spriteSourceSize": {"x":0,"y":0,"w":16,"h":48},
+		"sourceSize": {"w":16,"h":48}
+	},
+	"obs_rightEdgeLeft.png": {
+		"frame": {"x":132, "y":130, "w":16, "h":48},
+		"spriteSourceSize": {"x":0,"y":0,"w":16,"h":48},
+		"sourceSize": {"w":16,"h":48}
+	},
+	"obs_rightEdgeRight.png": {
+		"frame": {"x":156, "y":179, "w":6, "h":47},
+		"spriteSourceSize": {"x":0,"y":0,"w":16,"h":48},
+		"sourceSize": {"w":16,"h":48}
+	},
+	"obs_rightWallJoin.png": {
+		"frame": {"x":33, "y":163, "w":32, "h":48},
+		"spriteSourceSize": {"x":0,"y":0,"w":32,"h":48},
+		"sourceSize": {"w":32,"h":48}
+	},
+	"outsideBackground.png": {
+		"frame": {"x":66, "y":228, "w":16, "h":16},
+		"spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
+		"sourceSize": {"w":16,"h":16}
+	},
+	"rightWallPiece.png": {
+		"frame": {"x":66, "y":130, "w":32, "h":96},
+		"spriteSourceSize": {"x":0,"y":0,"w":32,"h":96},
+		"sourceSize": {"w":32,"h":96}
+	},
+	"templePassThrough.png": {
+		"frame": {"x":0, "y":65, "w":224, "h":64},
+		"spriteSourceSize": {"x":0,"y":0,"w":224,"h":64},
+		"sourceSize": {"w":224,"h":64}
+	},
+	"templeTop.png": {
+		"frame": {"x":0, "y":0, "w":224, "h":64},
+		"spriteSourceSize": {"x":0,"y":0,"w":224,"h":64},
+		"sourceSize": {"w":224,"h":64}
+	},
+	"tile.png": {
+		"frame": {"x":0, "y":163, "w":32, "h":32},
+		"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+		"sourceSize": {"w":32,"h":32}
+	},
+	"tile1.png": {
+		"frame": {"x":0, "y":130, "w":32, "h":32},
+		"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+		"sourceSize": {"w":32,"h":32}
+	},
+	"tile2.png": {
+		"frame": {"x":33, "y":130, "w":32, "h":32},
+		"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+		"sourceSize": {"w":32,"h":32}
+	},
+	"tile3.png": {
+		"frame": {"x":33, "y":212, "w":32, "h":32},
+		"spriteSourceSize": {"x":0,"y":0,"w":32,"h":32},
+		"sourceSize": {"w":32,"h":32}
+	}
+
+},
+"meta": {
+	"image": "sprites.png",
+	"size": {"w": 256, "h": 256},
+	"scale": "1"
+}
+}

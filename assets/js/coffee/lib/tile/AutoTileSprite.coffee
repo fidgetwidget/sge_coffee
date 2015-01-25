@@ -56,27 +56,3 @@ class @AutoTileSprite extends PIXI.DisplayObjectContainer
     @c.setTexture(textures[2])
     @d.setTexture(textures[3])
 
-
-# Object.defineProperty PIXI.AutoTileSprite::, "x",
-#   get: ->
-#     @position.x
-
-#   set: (value) ->
-#     @position.x = value
-#     @a.x = value
-#     @b.x = value + TILE_PART_SIZE[0]
-#     @c.x = value
-#     @d.x = value + TILE_PART_SIZE[0]
-#     return
-
-# Object.defineProperty PIXI.AutoTileSprite::, "y",
-#   get: ->
-#     @position.y
-
-#   set: (value) ->
-#     @position.y = value
-#     @a.y = value
-#     @b.y = value
-#     @c.y = value + TILE_PART_SIZE[0]
-#     @d.y = value + TILE_PART_SIZE[0]
-#     return

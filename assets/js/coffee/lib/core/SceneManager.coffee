@@ -1,13 +1,15 @@
 
 class @SceneManager
 
-  scenes:         {}
-  active_scenes:  []
+  scenes: undefined
+  active_scenes: undefined
+  scale: undefined
 
   constructor: () ->
     # build the scene SceneManager
     @scenes        = {}
     @active_scenes = []
+    @scale = { x: 1, y: 1 }
 
 
   add: (scene) =>
@@ -17,6 +19,8 @@ class @SceneManager
   ready: (sceneName) =>
     return console.warn("scene: '#{sceneName}' not found.") if @scenes[sceneName] is undefined
     current = @scenes[sceneName]
+    current.scale.x = @scale.x
+    current.scale.y = @scale.y
     current.load()
     @active_scenes.push(current)
 

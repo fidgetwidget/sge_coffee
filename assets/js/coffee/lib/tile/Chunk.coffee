@@ -7,7 +7,7 @@ class @Chunk extends PIXI.DisplayObjectContainer
   chunk_y: 0
   manager:  undefined
   tiles:    {}
-  tile_sprites:  {}
+  sprites:  {}
   toUpdate: []
   clean:    true
   onScreen: false
@@ -63,17 +63,17 @@ class @Chunk extends PIXI.DisplayObjectContainer
     @toUpdate.push({x:x, y:y}) unless @tiles[x][y] is value
     if value is null
       if @_testSprite(x, y)
-        @removeChild @tile_sprites[x][y]
-        delete @tile_sprites[x][y]
+        @removeChild @sprites[x][y]
+        delete @sprites[x][y]
     else
       if @_testSprite(x, y)
         unless @tiles[x][y] is value
           typeName = @manager.typeMap[value]
-          @tile_sprites[x][y].changeType(typeName)
+          @sprites[x][y].changeType(typeName)
 
       else
         @_ensureSprite(x, y)
-        @tile_sprites[x][y] = @makeSprite(x, y, value)
+        @sprites[x][y] = @makeSprite(x, y, value)
 
     return @tiles[x][y] = value 
 
@@ -90,7 +90,7 @@ class @Chunk extends PIXI.DisplayObjectContainer
 
   getSprite: (x, y) =>
     return null unless @_testSprite(x, y)
-    return @tile_sprites[x][y]
+    return @sprites[x][y]
 
 
   makeSprite: (x, y, value) =>
@@ -100,7 +100,7 @@ class @Chunk extends PIXI.DisplayObjectContainer
     sprite.position.x = x * CONST.TILE_SIZE[0]
     sprite.position.y = y * CONST.TILE_SIZE[1]
     @_ensureSprite(x, y)
-    @tile_sprites[x][y] = sprite
+    @sprites[x][y] = sprite
     @addChild(sprite)
     return sprite
 
@@ -128,13 +128,13 @@ class @Chunk extends PIXI.DisplayObjectContainer
 
 
   _testSprite: (x, y) ->
-    return false if @tile_sprites[x] is undefined
-    return false if @tile_sprites[x][y] is undefined
+    return false if @sprites[x] is undefined
+    return false if @sprites[x][y] is undefined
     return true
 
   _ensureSprite: (x, y) =>
-    @tile_sprites[x] = {}      if @tile_sprites[x] is undefined
-    @tile_sprites[x][y] = null if @tile_sprites[x][y] is undefined
+    @sprites[x] = {}      if @sprites[x] is undefined
+    @sprites[x][y] = null if @sprites[x][y] is undefined
 
 
   reset: () =>
@@ -142,7 +142,7 @@ class @Chunk extends PIXI.DisplayObjectContainer
     @chunk_x  = Number.Nan
     @chunk_y  = Number.Nan
     @tiles    = {}
-    @tile_sprites  = {}
+    @sprites  = {}
     @clean    = true
     @onScreen = false
     @toUpdate.pop() while @toUpdate.length > 0

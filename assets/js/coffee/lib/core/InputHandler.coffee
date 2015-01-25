@@ -14,6 +14,7 @@ class @InputHandler
   release:    undefined
   prev:       undefined
   mouseDown:  false
+  touch:      false
   mouseClick: false
   lastMouseX: 0
   lastMouseY: 0
@@ -22,11 +23,11 @@ class @InputHandler
 
 
   constructor: () ->
-    @actions = {}
-    @current = {}
-    @_released = []
-    @release = {}
-    @mouseDelta = { x: 0, y: 0 }
+    @actions    = {}
+    @current    = {}
+    @_released  = []
+    @release    = {}
+    @mouseDelta = [0, 0]
     @reset()
     @initKeys()
     @bindEvents()
@@ -49,10 +50,15 @@ class @InputHandler
   bindEvents: () =>
     document.addEventListener 'keyup', @onKeyUp
     document.addEventListener 'keydown', @onKeyDown
+
     document.addEventListener 'mouseup', @onMouseUp
     document.addEventListener 'mousedown', @onMouseDown
     document.addEventListener 'mousemove', @onMouseMove
     document.addEventListener 'click', @onMouseClick
+
+    document.addEventListener 'touchstart', @onTouchStart
+    document.addEventListener 'touchend', @onTouchEnd
+    document.addEventListener 'touchmove', @onTouchMove
 
   # 
   # Init the readable names for keyCodes Object
@@ -127,8 +133,8 @@ class @InputHandler
     @mouseClick = false
     @lastMouseX = null
     @lastMouseY = null
-    @mouseDelta.x = 0
-    @mouseDelta.y = 0
+    @mouseDelta[0] = 0
+    @mouseDelta[1] = 0
 
 
   ###
@@ -141,10 +147,11 @@ class @InputHandler
   # Update Method
   # 
   update: (delta) =>
-    # TODO: check for actions, and set true
+    # TODO: check for actions, and set true for use in a scene
 
 
   afterUpdate: () =>
+    @mouseClick = false
     while @_released.length > 0
       keycode = @_released.pop()
       @release[keycode] = false
@@ -207,14 +214,48 @@ class @InputHandler
   # 
   # Handle the Mouse Click Event
   # 
-  onMouseClick: (e) => @mouseClick = true
+  onMouseClick: (e) => 
+    if e.touchces
+      touch = e.touches[0] 
+      e.pageX = touch.pageX
+      e.pageY = touch.pageY
+    @mouseClick = true
+    @mouseDelta[0] = @lastMouseX - e.pageX
+    @mouseDelta[1] = @lastMouseY - e.pageY
+    @lastMouseX = e.pageX
+    @lastMouseY = e.pageY
 
   # 
   # Handle the Mouse Move Event
   # 
   onMouseMove: (e) =>
-    @mouseDelta.x = @lastMouseX - e.pageX
-    @mouseDelta.y = @lastMouseY - e.pageY
+    @mouseDelta[0] = @lastMouseX - e.pageX
+    @mouseDelta[1] = @lastMouseY - e.pageY
     @lastMouseX = e.pageX
     @lastMouseY = e.pageY
+
+  # 
+  # Handle the Touch Start Event
+  # 
+  onTouchStart: (e) =>  @getTouchPosition(e)
+
+  # 
+  # Handle the Touch End Event
+  # 
+  onTouchEnd: (e) =>  @getTouchPosition(e)
+
+  # 
+  # Handle the Touch Move Event
+  # 
+  onTouchMove: (e) => @getTouchPosition(e)
+
+
+  getTouchPosition: (e) =>
+    touch = e.touches[0]
+    return @touch = false unless touch
+    @touch = true
+    @mouseDelta[0] = @lastMouseX - touch.pageX
+    @mouseDelta[1] = @lastMouseY - touch.pageY
+    @lastMouseX = touch.pageX
+    @lastMouseY = touch.pageY
 

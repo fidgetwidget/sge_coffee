@@ -27,18 +27,18 @@ class @PathTestScene extends Scene
   load: () =>
     @game.stage.addChild(this)
     @addChild(@g)
-    @ready = true
+    @isReady = true
 
 
   unload: () =>
     @game.stage.removeChild(this)
     @removeChild(@g)
-    @ready = false
+    @isReady = false
 
 
   # Update stuff
   update: (delta) =>
-    return unless @ready
+    return unless @isReady
     if @game.input.current[@game.input.KEY['B']] and @sprites.length < 1000
       @sprites.push(@_makeSprite())
     
@@ -61,7 +61,7 @@ class @PathTestScene extends Scene
 
   # The Render part of the loop
   render: () =>
-    return unless @ready
+    return unless @isReady
     @g.clear()
     if @path.points.length >= 2
       @g.lineStyle(1, 'black')

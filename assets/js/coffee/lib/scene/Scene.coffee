@@ -6,7 +6,14 @@ class @Scene extends PIXI.DisplayObjectContainer
   name: ''
   type: 'Scene'
   game: undefined
-  ready: false
+  assetsLoaded: false
+  isReady: false
+  
+  # Sprite Groups for drawing position
+  background: undefined
+  stage: undefined
+  foreground: undefined
+
 
 
   constructor: (@name, @game) ->

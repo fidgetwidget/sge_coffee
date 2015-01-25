@@ -50,6 +50,9 @@ class @Engine
     @stage = new PIXI.Stage(0x66FF99)
     @renderer = PIXI.autoDetectRenderer(@width, @height, { view: canvas })
 
+    @scenes.scale.x = @width / canvas.offsetWidth
+    @scenes.scale.y = @height / canvas.offsetHeight
+
   # right now I am just using stats.js 
   _initDebug: () =>
     @ruler = new TimeRuler(@fpsInterval)
