@@ -60,9 +60,10 @@ class @GGJPart extends Entity
           rwj.position.x = right - @x + SIDE_WIDTH
           @parts.addChild rwj
         else
-          if right > halfCanvas
+          if right >= halfCanvas
             rw = new PIXI.Sprite.fromFrame('obs_rightEdgeRight.png')
-            rw.position.x = right - @x - TILE_SIZE
+            rw.anchor.x = 0
+            rw.position.x = right - @x + rw.width
           else
             rw = new PIXI.Sprite.fromFrame('obs_rightEdgeLeft.png')
             fillNeeded -= 1

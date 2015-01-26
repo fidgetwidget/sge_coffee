@@ -9,12 +9,14 @@ STATES = {
 BOOST_THREASHOLD = 180*180
 MOVE_THREASHOLD = 30*30
 BOOST_SPEED = 0.25
+RUN_SPEED = 0.19
 MOVE_SPEED = 0.1
 ROOM_CUT_OFF = 32 * 3
 ROOM_TYPES = [
   'empty'
   'leftSideWall'
   'rightSideWall'
+  'middleWall'
   'leftHole'
   'rightHole'
 ]
@@ -104,7 +106,7 @@ class @GGJScene extends Scene
   update: (delta) =>
     return unless @isReady
 
-    if @game.input.release[@game.input.KEY['P']]
+    if @game.input.release[@game.input.KEY['SPACEBAR']]
       @state = if @state is STATES.RUN then STATES.EDIT else STATES.RUN
 
     if @game.input.release[@game.input.KEY['I']]
@@ -166,7 +168,7 @@ class @GGJScene extends Scene
   ###
   doRunState: (delta) =>
     for room in @activeRooms
-      room.y -= MOVE_SPEED * delta
+      room.y -= RUN_SPEED * delta
       room.update(delta)
 
 

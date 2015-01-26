@@ -34,10 +34,12 @@ class @GGJRoom extends Entity
   ready: () =>
     switch @name
       when 'empty'
-        @high = 6
+        @high = 6 * Random.intBetween(1, 3)
       when 'leftSideWall'
         @high = 6
       when 'rightSideWall'
+        @high = 6
+      when 'middleWall'
         @high = 6
       when 'leftHole'
         @high = 6
@@ -52,7 +54,7 @@ class @GGJRoom extends Entity
     switch @name
 
       when 'leftSideWall'
-        wide = Random.intBetween(2, 6)
+        wide = 2 * Random.intBetween(1, 3)
         wall = new GGJPart('wall', @game, @scene, this)
         wall.wide = wide
         wall.x = (@canvasWidth * 0.5) - (16 * 5)
@@ -62,10 +64,20 @@ class @GGJRoom extends Entity
         @sprites.addChild(wall.parts)
 
       when 'rightSideWall'
-        wide = Random.intBetween(2, 6)
+        wide = 2 * Random.intBetween(1, 3)
         wall = new GGJPart('wall', @game, @scene, this)
         wall.wide = wide
         wall.x = (@canvasWidth * 0.5) + (16 * 5) - (wide * 16)
+        wall.ready()
+        @parts['wall'] = wall
+        @colliders['wall'].push(wall.collider)
+        @sprites.addChild(wall.parts)
+
+      when 'middleWall'
+        wide = 2 * Random.intBetween(1, 3)
+        wall = new GGJPart('wall', @game, @scene, this)
+        wall.wide = wide
+        wall.x = (@canvasWidth * 0.5) - (16 * wide * 0.5)
         wall.ready()
         @parts['wall'] = wall
         @colliders['wall'].push(wall.collider)
