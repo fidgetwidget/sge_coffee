@@ -107,7 +107,7 @@ class @GGJScene extends Scene
     if @game.input.release[@game.input.KEY['P']]
       @state = if @state is STATES.RUN then STATES.EDIT else STATES.RUN
 
-    if @game.input.release[@game.input.KEY['D']]
+    if @game.input.release[@game.input.KEY['I']]
       @state = if @state is STATES.DEBUG then STATES.EDIT else STATES.DEBUG
 
     if @game.input.release[@game.input.KEY['O']]
@@ -168,6 +168,17 @@ class @GGJScene extends Scene
     for room in @activeRooms
       room.y -= MOVE_SPEED * delta
       room.update(delta)
+
+
+    if @game.input.current[@game.input.KEY['W']] or @game.input.current[@game.input.KEY['ARROW_UP']]
+      @player.y -= MOVE_SPEED * delta
+    else if @game.input.current[@game.input.KEY['S']] or @game.input.current[@game.input.KEY['ARROW_DOWN']]
+      @player.y += MOVE_SPEED * delta
+
+    if @game.input.current[@game.input.KEY['A']] or @game.input.current[@game.input.KEY['ARROW_LEFT']]
+      @player.x -= MOVE_SPEED * delta
+    else if @game.input.current[@game.input.KEY['D']] or @game.input.current[@game.input.KEY['ARROW_RIGHT']]
+      @player.x += MOVE_SPEED * delta
 
 
     if @game.input.mouseDown or @game.input.touch
