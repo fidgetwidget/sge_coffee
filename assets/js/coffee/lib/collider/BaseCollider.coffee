@@ -1,6 +1,9 @@
 
 class @BaseCollider
 
+  # Properties
+  x: undefined
+  y: undefined
   entity: undefined
   offset: undefined
   _aabb:   undefined
@@ -11,7 +14,7 @@ class @BaseCollider
     @_aabb = new AABB()
 
 
-  getBounds: () =>
+  getAABB: () =>
     @_aabb.x = @x
     @_aabb.y = @y
     return @_aabb
@@ -27,10 +30,8 @@ class @BaseCollider
 
 
 Object.defineProperty BaseCollider::, "x",
-  get: -> return @entity.x + @offset.x
-    
-
+  get: -> return @entity.x + @offset.x + (@entity.width * 0.5)
 
 Object.defineProperty BaseCollider::, "y",
-  get: -> return @entity.y + @offset.y
+  get: -> return @entity.y + @offset.y + (@entity.height * 0.5)
     

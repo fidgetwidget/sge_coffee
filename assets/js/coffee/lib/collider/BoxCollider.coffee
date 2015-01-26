@@ -8,10 +8,21 @@ class @BoxCollider extends @BaseCollider
     super(entity)
 
 
-  testAABB: (aabb) => return @getBounds().testAABB(aabb)
+  testAABB: (aabb) => 
+    return @getAABB().testAABB(aabb)
     
 
-  collideAABB: (aabb) => return @getBounds().collideAABB(aabb)
+  collideAABB: (aabb) => 
+    return @getAABB().collideAABB(aabb)
+
+
+  @fromValues: (entity, x, y, width, height) =>
+    box = new BoxCollider(entity)
+    box.offset.x = x
+    box.offset.y = y
+    box.width = width
+    box.height = height
+    return box
 
 
 Object.defineProperty BoxCollider::, "width",

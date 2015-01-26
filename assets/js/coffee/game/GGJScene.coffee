@@ -4,6 +4,7 @@
 STATES = {
   EDIT:0
   RUN:1
+  DEBUG:2
 }
 BOOST_THREASHOLD = 180*180
 MOVE_THREASHOLD = 30*30
@@ -33,6 +34,7 @@ class @GGJScene extends Scene
   _rooms: undefined
   activeRooms: undefined
   countDownComplete: false
+  hideRooms: false
 
 
   constructor: (@name, @game) ->
@@ -50,19 +52,21 @@ class @GGJScene extends Scene
     @background = new PIXI.DisplayObjectContainer()
     @stage = new PIXI.DisplayObjectContainer()
     @foreground = new PIXI.DisplayObjectContainer()
-    @addChild(@background)
-    @addChild(@stage)
-    @addChild(@foreground)
-
     @g = new PIXI.Graphics()
     @player = new GGJPlayer(@game, this)
 
+    @addChild(@background)
+    @addChild(@stage)
+    @addChild(@foreground)
+    @addChild(@g) 
+
     @topRoom = new GGJRoom('topRoom', @game, this)
     @topRoom.isFirstRoom = true
-    @topRoom.height = 32 * 24
+    @topRoom.high = 24
 
     for type in ROOM_TYPES
-      @rooms[type] = new GGJRoom(type, @game, this)
+      @rooms[type] = new GGJRoom(type, @game, this) 
+
 
 
   # setup all of the managers
@@ -81,19 +85,18 @@ class @GGJScene extends Scene
         @assetsLoaded = true
         @load()
     @game.stage.addChild(this)
-    @addChild(@g)
-
     @topRoom.ready()
     @activeRooms.push(@topRoom)
     @player.ready()
     @isReady = true
+    
     setTimeout () =>
         @countDownComplete = true
       , 3000
+    
 
   unload: () =>
     @game.stage.removeChild(this)
-    @removeChild(@g)
     @isReady = false
 
 
@@ -103,37 +106,18 @@ class @GGJScene extends Scene
 
     if @game.input.release[@game.input.KEY['P']]
       @state = if @state is STATES.RUN then STATES.EDIT else STATES.RUN
-    @game.text.innerText = "#{@state}"
+
+    if @game.input.release[@game.input.KEY['D']]
+      @state = if @state is STATES.DEBUG then STATES.EDIT else STATES.DEBUG
+
+    if @game.input.release[@game.input.KEY['O']]
+      @toggleHideRooms()
 
     if @state is STATES.RUN
+
       if @countDownComplete
-        for room in @activeRooms
-          room.y -= MOVE_SPEED * delta
-          room.update(delta)
+        @doRunState(delta)
 
-      if @game.input.mouseDown or @game.input.touch
-        @moveSpeed = MOVE_SPEED
-        pos = @game.input.offsetPosition(@game.canvas)
-        deltaX = pos.x - @player.x
-        deltaY = pos.y - @player.y
-        distanceSquared = Math.abs((deltaX * deltaX) + (deltaY * deltaY))
-
-        if distanceSquared > MOVE_THREASHOLD
-          distance =  Math.sqrt(distanceSquared)
-          deltaXNorm = deltaX / distance
-          deltaYNorm = deltaY / distance
-          @moveSpeed = BOOST_SPEED if distanceSquared > BOOST_THREASHOLD
-          @player.x += deltaXNorm * @moveSpeed * delta
-          @player.y += deltaYNorm * @moveSpeed * delta
-
-      @player.update(delta)
-
-    for room in @activeRooms
-      bounds = @player.getBounds()
-
-      if room.collisionTest(bounds)
-        room.resolveCollision(@player)
-    
 
   # The Render part of the loop
   render: () =>
@@ -141,6 +125,14 @@ class @GGJScene extends Scene
     @g.clear()
     @player.render()
 
+    if @state is STATES.DEBUG
+      bounds = @player.getAABB()
+      @g.lineStyle(2, 0xff0000)
+      @g.drawRect(bounds.left, bounds.top, bounds.width, bounds.height)
+
+      for i in [0...@activeRooms.length] by 1
+        r = @activeRooms[i]
+        r.drawBounds(@g)
 
     # check if we need to add a new room to the end
     last = @activeRooms.length - 1
@@ -160,11 +152,60 @@ class @GGJScene extends Scene
         room.recycle()
         toRemove.push(i)
         @_rooms.push(room) unless room.name is 'topRoom'
+        
     # remove them
     while toRemove.length > 0
       index = toRemove.pop()
       @activeRooms.splice(i, 1)
 
+
+  ###
+  # 
+  # Go Through the RUN State behaviour
+  # 
+  ###
+  doRunState: (delta) =>
+    for room in @activeRooms
+      room.y -= MOVE_SPEED * delta
+      room.update(delta)
+
+
+    if @game.input.mouseDown or @game.input.touch
+      @moveSpeed = MOVE_SPEED
+      pos = @game.input.offsetPosition(@game.canvas)
+      deltaX = pos.x - @player.x
+      deltaY = pos.y - @player.y
+      distanceSquared = Math.abs((deltaX * deltaX) + (deltaY * deltaY))
+
+      if distanceSquared > MOVE_THREASHOLD
+        distance =  Math.sqrt(distanceSquared)
+        deltaXNorm = deltaX / distance
+        deltaYNorm = deltaY / distance
+        @moveSpeed = BOOST_SPEED if distanceSquared > BOOST_THREASHOLD
+        @player.x += deltaXNorm * @moveSpeed * delta
+        @player.y += deltaYNorm * @moveSpeed * delta
+
+    @player.update(delta)
+
+    for room in @activeRooms
+      bounds = @player.getAABB()
+
+      if room.collisionTest(bounds)
+        room.resolveCollision(@player)
+
+
+  toggleHideRooms: () =>
+    @hideRooms = !@hideRooms
+    for i in [0...@activeRooms.length] by 1
+      r = @activeRooms[i]
+      if @hideRooms
+        @background.removeChild(r.background)
+        @background.removeChild(r.walls)
+        @stage.removeChild(r.sprites)
+      else
+        @background.addChild(r.background)
+        @background.addChild(r.walls)
+        @stage.addChild(r.sprites)
 
 
   pos = null

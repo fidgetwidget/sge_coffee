@@ -106,4 +106,21 @@ class @AABB
   py = 0
   l = 0
 
+Object.defineProperty AABB::, "left",
+  get: -> return @x - @w
+    
+Object.defineProperty AABB::, "right",
+  get: -> return @x + @w
+
+Object.defineProperty AABB::, "top",
+  get: -> return @y - @h
+
+Object.defineProperty AABB::, "bottom",
+  get: -> return @y + @h
+
+Object.defineProperty AABB::, "width",
+  get: -> return @w * 2
+
+Object.defineProperty AABB::, "height",
+  get: -> return @h * 2
 

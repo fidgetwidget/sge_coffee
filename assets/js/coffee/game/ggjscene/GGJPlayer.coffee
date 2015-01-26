@@ -4,7 +4,7 @@ class @GGJPlayer extends Entity
 
   prevState: 0
   currentState: 0
-
+  sprite: undefined
 
   constructor: (game, scene) ->
     super('GGJPlayer', game, scene)
@@ -21,9 +21,11 @@ class @GGJPlayer extends Entity
     @sprite = PIXI.Sprite.fromFrame('player')
     @sprite.anchor.x = 0.5
     @sprite.anchor.y = 0.5
-    @scene.stage.addChild(@sprite)
     @x = (@game.canvas.width * 0.5) - (@sprite.width * 0.5)
     @y = (@game.canvas.height * 0.5) - (@sprite.height * 0.5)
+    @sprite.x = @x
+    @sprite.y = @y
+    @scene.stage.addChild(@sprite)
     @isReady = true
 
 
@@ -32,4 +34,6 @@ class @GGJPlayer extends Entity
 
 
   render: () =>
+    @sprite.x = @x
+    @sprite.y = @y
     # change animation if state changed

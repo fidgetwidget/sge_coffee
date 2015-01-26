@@ -1,12 +1,13 @@
 OFFSIDE_WIDTH = 16 * 3
 TOP_HEIGHT = 16 * 4
-MIN_HEIGHT = 32 * 24
+MIN_HIGH = 24
 
 
 class @GGJRoom extends Entity
 
   parts: undefined
-  height: MIN_HEIGHT
+  high: MIN_HIGH
+  width: 320
   colliders: undefined
   canvasWidth: 0
   isFirstRoom: false
@@ -28,8 +29,56 @@ class @GGJRoom extends Entity
     }
     @background = new PIXI.DisplayObjectContainer()
     @walls = new PIXI.DisplayObjectContainer()
-    @sprite = new PIXI.DisplayObjectContainer()
+    @sprites = new PIXI.DisplayObjectContainer()
 
+
+  ready: () =>
+    switch @name
+      when 'empty'
+        @high = 6
+      when 'leftSideWall'
+        @high = 6
+      when 'rightSideWall'
+        @high = 6
+      when 'leftHole'
+        @high = 6
+      when 'rightHole'
+        @high = 6
+
+    @initBase() unless @baseInit
+    @scene.background.addChild(@background)
+    @scene.background.addChild(@walls)
+    @scene.stage.addChild(@sprites)
+
+    switch @name
+
+      when 'leftSideWall'
+        wide = Random.intBetween(2, 4)
+        wall = new GGJPart('wall', @game, @scene, this)
+        wall.wide = wide
+        wall.x = -(16 * 5)
+        wall.ready()
+        @parts['wall'] = wall
+        @colliders['wall'].push(wall.collider)
+        @sprites.addChild(wall)
+
+      when 'rightSideWall'
+        wide = Random.intBetween(2, 4)
+        wall = new GGJPart('wall', @game, @scene, this)
+        wall.wide = wide
+        wall.x = (16 * 5) - (wide * 16)
+        wall.ready()
+        @parts['wall'] = wall
+        @colliders['wall'].push(wall.collider)
+        @sprites.addChild(wall)
+
+      when 'leftHole'
+        true
+
+      when 'rightHole'
+        true
+
+    @isReady = true
 
   initBase: () =>
     lwt = PIXI.TextureCache['leftWallPiece.png']
@@ -69,86 +118,43 @@ class @GGJRoom extends Entity
       @parts['templeTop'] = topPart
       @walls.addChild(topPart)
 
-    lCollider = AABB.fromValues(0, 0, OFFSIDE_WIDTH + lwt.width, @height)
     sideWidth = OFFSIDE_WIDTH + rwt.width
-    rCollider = AABB.fromValues(@canvasWidth - sideWidth, 0, sideWidth, @height)
-
+    xoffset =   (@canvasWidth * 0.5) - (sideWidth * 0.5)
+    lCollider = BoxCollider.fromValues(this, -xoffset , 0, sideWidth, @height) 
+    rCollider = BoxCollider.fromValues(this, xoffset, 0, sideWidth, @height) 
     @colliders.wall.push(lCollider)
     @colliders.wall.push(rCollider)
     @baseInit = true
 
 
-  ready: () =>
-    switch @name
-      when 'empty'
-        @height = 32 * 6
-      when 'leftSideWall'
-        @height = 32 * 6
-      when 'rightSideWall'
-        @height = 32 * 6
-      when 'leftHole'
-        @height = 32 * 6
-      when 'rightHole'
-        @height = 32 * 6
-
-    @initBase() unless @baseInit
-    @scene.background.addChild(@background)
-    @scene.background.addChild(@walls)
-    @scene.stage.addChild(@sprite)
-
-    switch @name
-
-      when 'leftSideWall'
-        wide = Random.intBetween(2, 4)
-        wall = new GGJPart('wall', @game, @scene)
-        wall.wide = wide
-        wall.x = (16 * 5)
-        wall.ready()
-        @parts['wall'] = wall
-        @colliders['wall'].push(wall.collider)
-        @sprite.addChild(wall.sprite)
-
-      when 'rightSideWall'
-        wide = Random.intBetween(2, 4)
-        wall = new GGJPart('wall', @game, @scene)
-        wall.wide = wide
-        wall.x = @game.canvas.width - (16 * 5) - (wide * 16)
-        wall.ready()
-        @parts['wall'] = wall
-        @colliders['wall'].push(wall.collider)
-        @sprite.addChild(wall.sprite)
-
-      when 'leftHole'
-        true
-
-      when 'rightHole'
-        true
-
-    @isReady = true
-
-
   unload: () =>
     @scene.background.removeChild(@background)
     @scene.background.removeChild(@walls)
+    @scene.stage.removeChild(@sprites)
     @isReady = false
 
 
   update: (delta) =>
-
     # Do some state changing stuff here?
 
 
   render: () =>
-    @background.position.x = @_x
-    @background.position.y = @_y
-    @walls.position.x = @_x
-    @walls.position.y = @_y
-    # change animation if state changed
+    @background.x = @x
+    @background.y = @y
+    @walls.x = @x
+    @walls.y = @y
+    @sprites.x = @x
+    @sprites.y = @y
+
+
+  drawBounds: (graphics) =>
+    for wall in @colliders.wall
+      bounds = if wall instanceof AABB then wall else wall.getAABB()
+      graphics.drawRect(bounds.left, bounds.top, bounds.width, bounds.height)
 
 
   clone: () =>
     clone = new GGJRoom(@name, @game, @scene)
-    clone.height = @height
     return clone
 
 
@@ -164,7 +170,7 @@ class @GGJRoom extends Entity
 
 
   resolveCollision: (entity) =>
-    bounds = entity.getBounds()
+    bounds = entity.getAABB()
     return unless bounds #early exit for a null bounds check
 
     for wall in @colliders.wall
@@ -175,3 +181,11 @@ class @GGJRoom extends Entity
         else
           entity.x -= r.py
 
+
+
+
+Object.defineProperty GGJRoom::, "height",
+  get: -> return @high * 16
+  set: (value) -> 
+    return @high = value / 16
+    

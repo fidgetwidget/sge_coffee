@@ -6,13 +6,13 @@ class @Entity
   type:     'Entity'
   game:     undefined
   scene:    undefined
-  sprite:   undefined
   collider: undefined
   states:   undefined
-  _x: 0
-  _y: 0
+  x: 0
+  y: 0
+  width: 0
+  height: 0
   isReady:  false
-
 
   constructor: (@name, @game, @scene) ->
     return console.warn 'Entitiy needs game to function.' unless @game
@@ -35,29 +35,9 @@ class @Entity
     # render loop for changing animation
 
 
-  getBounds: () =>
+  getAABB: () =>
     if @collider
-      return @collider.getBounds()
+      return @collider.getAABB()
     else
       return null
-
-  # TODO: put basic collision handling into the entitiy, rather than the sprite
-
-Object.defineProperty Entity::, "x",
-  get: ->
-    return if @sprite then @sprite.x else @_x
-
-  set: (value) ->
-    if @sprite
-      @sprite.x = value
-    return @_x = value
-
-Object.defineProperty Entity::, "y",
-  get: ->
-    return if @sprite then @sprite.y else @_y
-
-  set: (value) ->
-    if @sprite
-      @sprite.y = value
-    return @_y = value
     
