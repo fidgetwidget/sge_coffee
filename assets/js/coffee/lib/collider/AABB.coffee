@@ -94,17 +94,18 @@ class @AABB
     return aabb
 
 
-  # to prevent junk from being made 
-  #  TODO: move these to global variables for better memory use
-  tx = 0
-  ty = 0
-  tw = 0
-  th = 0
-  dx = 0
-  px = 0
-  dy = 0
-  py = 0
-  l = 0
+
+# TODO: move these to global variables for better memory use
+tx = 0
+ty = 0
+tw = 0
+th = 0
+dx = 0
+px = 0
+dy = 0
+py = 0
+l = 0
+
 
 Object.defineProperty AABB::, "left",
   get: -> return @x - @w

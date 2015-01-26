@@ -1,13 +1,17 @@
 
 class @BaseCollider
 
+  # 
   # Properties
+  # 
+
   x: undefined
   y: undefined
   entity: undefined
   offset: undefined
   _aabb:   undefined
 
+  
   constructor: (entity) ->
     @entity = entity
     @offset = new PIXI.Point()
@@ -28,10 +32,17 @@ class @BaseCollider
     return false
 
 
+cx = 0
+cy = 0
+
 
 Object.defineProperty BaseCollider::, "x",
-  get: -> return @entity.x + @offset.x + (@entity.width * 0.5)
+  get: -> 
+    cx = @entity.x + (@entity.width * @entity.scale.x * 0.5)
+    return cx + @offset.x
 
 Object.defineProperty BaseCollider::, "y",
-  get: -> return @entity.y + @offset.y + (@entity.height * 0.5)
+  get: -> 
+    cy = @entity.y + (@entity.height * @entity.scale.y * 0.5)
+    return cy + @offset.y
     

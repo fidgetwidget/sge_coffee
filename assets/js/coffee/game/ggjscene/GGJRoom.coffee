@@ -7,7 +7,6 @@ class @GGJRoom extends Entity
 
   parts: undefined
   high: MIN_HIGH
-  width: 320
   colliders: undefined
   canvasWidth: 0
   isFirstRoom: false
@@ -53,24 +52,24 @@ class @GGJRoom extends Entity
     switch @name
 
       when 'leftSideWall'
-        wide = Random.intBetween(2, 4)
+        wide = Random.intBetween(2, 6)
         wall = new GGJPart('wall', @game, @scene, this)
         wall.wide = wide
-        wall.x = -(16 * 5)
+        wall.x = (@canvasWidth * 0.5) - (16 * 5)
         wall.ready()
         @parts['wall'] = wall
         @colliders['wall'].push(wall.collider)
-        @sprites.addChild(wall)
+        @sprites.addChild(wall.parts)
 
       when 'rightSideWall'
-        wide = Random.intBetween(2, 4)
+        wide = Random.intBetween(2, 6)
         wall = new GGJPart('wall', @game, @scene, this)
         wall.wide = wide
-        wall.x = (16 * 5) - (wide * 16)
+        wall.x = (@canvasWidth * 0.5) + (16 * 5) - (wide * 16)
         wall.ready()
         @parts['wall'] = wall
         @colliders['wall'].push(wall.collider)
-        @sprites.addChild(wall)
+        @sprites.addChild(wall.parts)
 
       when 'leftHole'
         true
@@ -84,11 +83,15 @@ class @GGJRoom extends Entity
     lwt = PIXI.TextureCache['leftWallPiece.png']
     rwt = PIXI.TextureCache['rightWallPiece.png']
     bgt = PIXI.TextureCache['outsideBackground.png']
+    ft = PIXI.TextureCache['tile.png']
 
     lbg = new PIXI.TilingSprite(bgt, OFFSIDE_WIDTH, @height)
     rbg = new PIXI.TilingSprite(bgt, OFFSIDE_WIDTH, @height)
     rbg.anchor.x = 1
     rbg.position.x = @canvasWidth
+    floor = new PIXI.TilingSprite(ft, @canvasWidth - (OFFSIDE_WIDTH * 2), @height)
+    floor.x = OFFSIDE_WIDTH
+    @background.addChild(floor)
     @background.addChild(lbg)
     @background.addChild(rbg)
 
@@ -179,13 +182,16 @@ class @GGJRoom extends Entity
         if r.px isnt 0
           entity.x -= r.px
         else
-          entity.x -= r.py
+          entity.y -= r.py
 
 
+  _getWidth: () =>
+    return 320
 
+  _getHeight: () =>
+    return @high * 16
 
-Object.defineProperty GGJRoom::, "height",
-  get: -> return @high * 16
-  set: (value) -> 
+  _setHeight: (value) =>
     return @high = value / 16
+
     
