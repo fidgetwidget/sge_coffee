@@ -25,12 +25,6 @@ config = require("./config");
 
 config.setEnvironment(env);
 
-if (env !== 'production') {
-  mongoose.connect('mongodb://localhost/example');
-} else {
-  console.log('If you are running in production, you may want to modify the mongoose connect path');
-}
-
 app.use(assets());
 
 app.use(express["static"](process.cwd() + '/public'));

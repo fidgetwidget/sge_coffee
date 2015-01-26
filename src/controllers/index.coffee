@@ -4,6 +4,7 @@ module.exports =
 
   # Lists all posts
   index: (req, res) ->
-    Post.find {}, (err, posts) ->
-      res.render 'posts/index', { posts: posts }
+    res.render 'index'
+    # Post.find {}, (err, posts) ->
+    #   res.render 'posts/index', { posts: posts }
 

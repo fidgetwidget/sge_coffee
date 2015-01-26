@@ -5,10 +5,6 @@ Post = require('../models/post');
 
 module.exports = {
   index: function(req, res) {
-    return Post.find({}, function(err, posts) {
-      return res.render('posts/index', {
-        posts: posts
-      });
-    });
+    return res.render('index');
   }
 };
