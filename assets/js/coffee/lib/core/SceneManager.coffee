@@ -23,6 +23,7 @@ class @SceneManager
     current.scale.y = @scale.y
     current.load()
     @active_scenes.push(current)
+    return current
 
 
   remove: (sceneName) =>

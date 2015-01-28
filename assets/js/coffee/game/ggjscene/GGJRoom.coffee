@@ -5,7 +5,6 @@ TOP_HEIGHT    = TILE_SIZE * 4
 MIN_HIGH      = 24
 
 
-
 class @GGJRoom extends Entity
 
   parts: undefined
@@ -177,11 +176,11 @@ class @GGJRoom extends Entity
 
   drawBounds: (graphics) =>
     for wall in @colliders.wall
-      bounds = if wall instanceof AABB then wall else wall.getAABB()
+      bounds = if wall instanceof AABB then wall else wall.aabb
       graphics.drawRect(bounds.left, bounds.top, bounds.width, bounds.height)
 
     for hole in @colliders.hole
-      bounds = if hole instanceof AABB then hole else hole.getAABB()
+      bounds = if hole instanceof AABB then hole else hole.aabb
       graphics.drawRect(bounds.left, bounds.top, bounds.width, bounds.height)
 
 
@@ -204,7 +203,7 @@ class @GGJRoom extends Entity
 
 
   doCollision: (entity, results) =>
-    bounds = entity.getAABB()
+    bounds = entity.aabb
     return unless bounds #early exit for a null bounds check
     results = results || []
     for wall in @colliders.wall

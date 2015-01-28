@@ -7,7 +7,7 @@ class @TilesTestScene extends Scene
   g: undefined
   showChunkLines: false
   current_tile_index: 1
-  moveSpeed: 0.1
+  moveSpeed: (64 / 30)
 
 
   constructor: (@name, @game) ->
@@ -64,7 +64,7 @@ class @TilesTestScene extends Scene
 
 
   # Update stuff
-  update: (delta) =>
+  update: () =>
     return unless @ready
     pos = @game.input.offsetPosition(@game.canvas)
     world_x = Math.floor((pos.x - @position.x) / (CONST.TILE_SIZE[0] * @scale.x))
@@ -75,7 +75,7 @@ class @TilesTestScene extends Scene
     tile_y  = world_y % CONST.CHUNK_SIZE[1]
 
     @game.text.innerText = "wx:#{world_x} wy:#{world_y} cx:#{chunk_x} cy:#{chunk_y} tx:#{tile_x} ty:#{tile_y}"
-    @tiles.update(delta)
+    @tiles.update()
 
     if @game.input.mouseDown
       @tiles.set(world_x, world_y, @current_tile_index, true)
@@ -99,16 +99,16 @@ class @TilesTestScene extends Scene
       @current_tile_index = 6
 
     if @game.input.current[@game.input.KEY['ARROW_UP']]
-      @position.y += @scale.y * delta * @moveSpeed
+      @position.y += @scale.y * @moveSpeed
     else if @game.input.current[@game.input.KEY['ARROW_DOWN']]
-      @position.y -= @scale.y * delta * @moveSpeed
+      @position.y -= @scale.y * @moveSpeed
     if @game.input.current[@game.input.KEY['ARROW_LEFT']]
-      @position.x += @scale.x * delta * @moveSpeed
+      @position.x += @scale.x * @moveSpeed
     else if @game.input.current[@game.input.KEY['ARROW_RIGHT']]
-      @position.x -= @scale.x * delta * @moveSpeed
+      @position.x -= @scale.x * @moveSpeed
 
-    @position.x = Math.floor(@position.x)
-    @position.y = Math.floor(@position.y)
+    @position.x = Math.round(@position.x)
+    @position.y = Math.round(@position.y)
 
     if @game.input.release[@game.input.KEY['LEFT_SQUARE_BRACKET']]
       @scale.x -= 0.25 unless @scale.x is 0.25

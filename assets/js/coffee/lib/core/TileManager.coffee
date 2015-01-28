@@ -20,11 +20,11 @@ class @TileManager
     @toUpdate = []
 
 
-  update: (delta) =>
+  update: () =>
     while @toUpdate.length > 0
       u = @toUpdate.pop()
       c = @getChunk(u.x, u.y)
-      c.update(delta) unless c is undefined or c is null
+      c.update() unless c is undefined or c is null
 
 
   render: () =>

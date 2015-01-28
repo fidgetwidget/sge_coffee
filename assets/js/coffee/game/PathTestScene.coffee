@@ -37,7 +37,7 @@ class @PathTestScene extends Scene
 
 
   # Update stuff
-  update: (delta) =>
+  update: () =>
     return unless @isReady
     if @game.input.current[@game.input.KEY['B']] and @sprites.length < 1000
       @sprites.push(@_makeSprite())
@@ -56,7 +56,7 @@ class @PathTestScene extends Scene
       @path.clear()
 
     for key, sprite of @sprites
-      sprite.rotation += (0.5 * (delta/1000))
+      sprite.rotation += (1 / 30)
 
 
   # The Render part of the loop

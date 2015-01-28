@@ -6,4 +6,3 @@ class @ColliderGroup extends BaseCollider
   constructor: (entity) ->
     super(entity)
 
-

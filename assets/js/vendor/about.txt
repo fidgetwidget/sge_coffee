@@ -4,3 +4,6 @@ https://github.com/GoodBoyDigital/pixi.js
 
 stats.min.js from:
 https://github.com/mrdoob/stats.js/
+
+performance-now-polyfill.js from:
+https://gist.github.com/paulirish/5438650

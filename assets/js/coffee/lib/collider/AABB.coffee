@@ -1,12 +1,25 @@
-
 # based on the center position, half width, half height solution found here:
 # http://www.metanetsoftware.com/technique.html
 class @AABB
+
+  # 
+  # Properties
+  # 
+  get = (props) => @::__defineGetter__ name, getter for name, getter of props
+  set = (props) => @::__defineSetter__ name, setter for name, setter of props
 
   x: undefined
   y: undefined
   w: undefined
   h: undefined
+
+  get left: ->    return @x - @w
+  get right: ->   return @x + @w
+  get top: ->     return @y - @h
+  get bottom: ->  return @y + @h
+  get width: ->   return @w * 2
+  get height: ->  return @h * 2
+
 
   constructor: () ->
     @x = 0
@@ -105,23 +118,3 @@ px = 0
 dy = 0
 py = 0
 l = 0
-
-
-Object.defineProperty AABB::, "left",
-  get: -> return @x - @w
-    
-Object.defineProperty AABB::, "right",
-  get: -> return @x + @w
-
-Object.defineProperty AABB::, "top",
-  get: -> return @y - @h
-
-Object.defineProperty AABB::, "bottom",
-  get: -> return @y + @h
-
-Object.defineProperty AABB::, "width",
-  get: -> return @w * 2
-
-Object.defineProperty AABB::, "height",
-  get: -> return @h * 2
-

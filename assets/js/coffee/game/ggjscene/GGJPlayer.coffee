@@ -15,7 +15,7 @@ class @GGJPlayer extends Entity
     @collider = new BoxCollider(this)
     @collider.width = 16
     @collider.height = 32
-    @collider.offset.y = -8
+    @collider.offset.y = -12
     
 
   ready: () =>

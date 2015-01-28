@@ -28,7 +28,7 @@ class @Chunk extends PIXI.DisplayObjectContainer
         @_ensureTile(xx, yy)
 
 
-  update: (delta) =>
+  update: () =>
     # update the toUpdate tiles
     while @toUpdate.length > 0
       u = @toUpdate.pop()

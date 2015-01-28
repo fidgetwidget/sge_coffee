@@ -17,12 +17,11 @@ class @Game extends Engine
 
     
   init: () =>
-    # pathTestScene = new PathTestScene('pathTestScene', this)
-    # tilesTestScene = new TilesTestScene('tilesTestScene', this)
+    pathTestScene = new PathTestScene('pathTestScene', this)
+    tilesTestScene = new TilesTestScene('tilesTestScene', this)
     ggjScene = new GGJScene('ggjScene', this)
-    # @scenes.add(pathTestScene)
-    # @scenes.add(tilesTestScene)
+    @scenes.add(pathTestScene)
+    @scenes.add(tilesTestScene)
     @scenes.add(ggjScene)
-    @scenes.ready('ggjScene')
-    window.scene = ggjScene
+    window.scene = @scenes.ready('pathTestScene')
 

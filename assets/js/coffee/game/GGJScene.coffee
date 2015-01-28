@@ -1,23 +1,15 @@
 #= require ../lib/scene/Scene.coffee 
 #= require_tree /ggjscene
 
-STATES = {
-  PAUSE:  0
-  RUN:    1
-  RESET:  2
-}
-BOOST_THREASHOLD = 180*180
-MOVE_THREASHOLD = 30*30
-BOOST_SPEED   = (80 / 30)
-INIT_SPEED    = (64 / 30)
-MOVE_SPEED    = (64 / 30)
-ROOM_CUT_OFF  = 32 * 3
-ROOM_TYPES = [
-  'empty'
-  'wall'
-  'hole'
-]
-TILE_SIZE = 16
+STATES            = { PAUSE: 0, RUN: 1, RESET: 2 }
+BOOST_THREASHOLD  = 180 * 180
+MOVE_THREASHOLD   = 30 * 30
+BOOST_SPEED       = 96 / 30
+INIT_SPEED        = 80 / 30
+MOVE_SPEED        = 64 / 30
+ROOM_CUT_OFF      = 32 * 3
+ROOM_TYPES        = [ 'empty', 'wall', 'hole' ]
+TILE_SIZE         = 16
 
 
 class @GGJScene extends Scene
@@ -168,7 +160,7 @@ class @GGJScene extends Scene
     @player.render()
 
     if @drawBounds
-      bounds = @player.getAABB()
+      bounds = @player.aabb
       @g.lineStyle(2, 0xff0000)
       @g.drawRect(bounds.left, bounds.top, bounds.width, bounds.height)
 
@@ -286,7 +278,7 @@ class @GGJScene extends Scene
     for i in [0..@activeRooms.length] by 1
       room = @activeRooms[i]
       continue unless room
-      bounds = @player.getAABB()
+      bounds = @player.aabb
 
       if room.collisionTest(bounds)
         px = 0
