@@ -146,7 +146,7 @@ class @InputHandler
   # 
   # Update Method
   # 
-  update: (delta) =>
+  update: () =>
     # TODO: check for actions, and set true for use in a scene
 
 

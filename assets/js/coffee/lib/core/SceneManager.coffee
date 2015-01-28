@@ -33,9 +33,9 @@ class @SceneManager
     @active_scenes.splice(i, 1)
 
 
-  update: (delta) =>
+  update: () =>
     for scene in @active_scenes
-      scene.update(delta)
+      scene.update()
 
 
   render: () =>

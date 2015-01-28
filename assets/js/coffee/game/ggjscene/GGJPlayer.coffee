@@ -14,7 +14,7 @@ class @GGJPlayer extends Entity
   init: () =>
     @collider = new BoxCollider(this)
     @collider.width = 16
-    @collider.height = 16
+    @collider.height = 32
     @collider.offset.y = -8
     
 
@@ -26,11 +26,11 @@ class @GGJPlayer extends Entity
     @y = (@game.canvas.height * 0.5)
     @sprite.x = @x
     @sprite.y = @y
-    @scene.stage.addChild(@sprite)
+    @scene.midground.addChild(@sprite)
     @isReady = true
 
 
-  update: (delta) =>
+  update: () =>
     # Do some state changing stuff here?
 
 

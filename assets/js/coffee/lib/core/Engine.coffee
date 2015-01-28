@@ -132,10 +132,10 @@ class @Engine
       @ruler.begin()
 
     @ruler.addMarker('update', '#008629') if @debug
-    @_update(delta)
+    @_update()
     @ruler.endMarker('update') if @debug
     
-    if delta > @fpsInterval
+    if true # delta > @fpsInterval
     
       @clock = now - (delta % @fpsInterval)
       @ruler.addMarker('render', '#45077A') if @debug

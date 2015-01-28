@@ -37,7 +37,7 @@ class @Scene extends PIXI.DisplayObjectContainer
 
 
 
-  update: (delta) =>
+  update: () =>
     # update the scene...
 
 

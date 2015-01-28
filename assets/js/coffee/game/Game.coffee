@@ -11,7 +11,9 @@ class @Game extends Engine
 
   constructor: (canvas_id) ->
     super(canvas_id)
+    @debug = true
     window.game = this
+    PIXI.scaleModes.DEFAULT = PIXI.scaleModes.NEAREST
 
     
   init: () =>

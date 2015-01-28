@@ -51,7 +51,7 @@ class @Entity
     @_scale.x = 1
     @_scale.y = 1
 
-  update: (delta) =>
+  update: () =>
     # update loop for changing state
 
   render: () =>

@@ -2,21 +2,22 @@
 #= require_tree /ggjscene
 
 STATES = {
-  EDIT: 0
-  RUN:  1
-  DEBUG:2
+  PAUSE:  0
+  RUN:    1
+  RESET:  2
 }
 BOOST_THREASHOLD = 180*180
 MOVE_THREASHOLD = 30*30
-BOOST_SPEED   = 0.25
-RUN_SPEED     = 0.19
-MOVE_SPEED    = 0.1
+BOOST_SPEED   = (80 / 30)
+INIT_SPEED    = (64 / 30)
+MOVE_SPEED    = (64 / 30)
 ROOM_CUT_OFF  = 32 * 3
 ROOM_TYPES = [
   'empty'
   'wall'
   'hole'
 ]
+TILE_SIZE = 16
 
 
 class @GGJScene extends Scene
@@ -25,21 +26,26 @@ class @GGJScene extends Scene
   texture: undefined
   loader: undefined
   player: undefined
-  state: STATES.RUN
-  moveSpeed: 0
-  isBoosting: false
   topRoom: undefined
   rooms: undefined
   _rooms: undefined
   activeRooms: undefined
-  countDownComplete: false
   background: undefined
   stage: undefined
+  midground: undefined
   foreground: undefined
   countdownText: undefined
   runText: undefined
+
+  state: STATES.RUN
+  currentSpeed: 0
+  moveSpeed: 0
+  isBoosting: false
+  countdownComplete: false
   countdownNum: 5
+  distance: 0
   hideRooms: false
+  drawBounds: false
 
 
   constructor: (@name, @game) ->
@@ -53,17 +59,14 @@ class @GGJScene extends Scene
     @rooms = {}
     @_rooms = []
     @activeRooms = []
+    @collisionsData = []
 
     @background = new PIXI.DisplayObjectContainer()
-    @stage = new PIXI.DisplayObjectContainer()
+    @midground = new PIXI.DisplayObjectContainer()
     @foreground = new PIXI.DisplayObjectContainer()
+
     @g = new PIXI.Graphics()
     @player = new GGJPlayer(@game, this)
-
-    @addChild(@background)
-    @addChild(@stage)
-    @addChild(@foreground)
-    @addChild(@g) 
 
     @topRoom = new GGJRoom('topRoom', @game, this)
     @topRoom.isFirstRoom = true
@@ -90,49 +93,72 @@ class @GGJScene extends Scene
         @load()
 
     @game.stage.addChild(this)
+    @addChild(@background)
+    @addChild(@midground)
+    @addChild(@foreground)
+    @addChild(@g) 
+
     @topRoom.x = 0
     @topRoom.y = 0
     @topRoom.ready()
     @activeRooms.push(@topRoom)
 
     @player.ready()
+    @currentSpeed = INIT_SPEED
     @isReady = true
+    @distance = 0
     @doCountdown()
     
 
   unload: () =>
     @isReady = false
-    @countDownComplete = false
+    @countdownComplete = false
+    @countdownNum = 3
+    
+    @removeChild(@background)
+    @removeChild(@midground)
+    @removeChild(@foreground)
+    @removeChild(@g) 
+
+    @game.stage.removeChild(@countdownText)
+    @game.stage.removeChild(@runText)
     @game.stage.removeChild(this)
+
     while @activeRooms.length > 0
       @activeRooms.pop()
-    
-
-
+  
 
   reset: () =>
     @unload()
     @load()
 
 
-
   # Update stuff
-  update: (delta) =>
+  update: () =>
     return unless @isReady
 
     if @game.input.release[@game.input.KEY['SPACEBAR']]
-      @state = if @state is STATES.RUN then STATES.EDIT else STATES.RUN
+      if @state is STATES.RESET
+        return @reset()
 
-    if @game.input.release[@game.input.KEY['I']]
-      @state = if @state is STATES.DEBUG then STATES.EDIT else STATES.DEBUG
+      @state = if @state is STATES.RUN then STATES.PAUSE else STATES.RUN
 
-    if @game.input.release[@game.input.KEY['O']]
+    if @game.input.release[@game.input.KEY['0']]
+      @drawBounds = !@drawBounds
+
+    if @game.input.release[@game.input.KEY['9']]
       @toggleHideRooms()
 
-    if @state is STATES.RUN
+    if @countdownComplete
 
-      if @countDownComplete
-        @doRunState(delta)
+      if @state is STATES.RUN
+        @doRunState()
+
+    else
+
+      @countdownText.scale.x += (1 / 30)
+      @countdownText.scale.y += (1 / 30)
+
 
 
   # The Render part of the loop
@@ -141,7 +167,7 @@ class @GGJScene extends Scene
     @g.clear()
     @player.render()
 
-    if @state is STATES.DEBUG
+    if @drawBounds
       bounds = @player.getAABB()
       @g.lineStyle(2, 0xff0000)
       @g.drawRect(bounds.left, bounds.top, bounds.width, bounds.height)
@@ -153,12 +179,9 @@ class @GGJScene extends Scene
     # check if we need to add a new room to the end
     last = @activeRooms.length - 1
     lastRoom = @activeRooms[last]
-    if lastRoom.y + lastRoom.height < @game.canvas.height + ROOM_CUT_OFF
-      rand = Random.intBetween(0, 6)
-      newRoom = if @_rooms.length > 0 and rand > 3 then @_rooms.pop() else Random.inHash(@rooms).clone()
-      newRoom.ready()
-      newRoom.y = lastRoom.y + lastRoom.height
-      @activeRooms.push(newRoom)
+    lastRoomBottom = lastRoom.y + lastRoom.height
+    if lastRoomBottom < @game.canvas.height + ROOM_CUT_OFF
+      @addRoom(lastRoomBottom)
 
     # test for rooms we can remove
     for i in [0...@activeRooms.length] by 1
@@ -168,41 +191,50 @@ class @GGJScene extends Scene
       if room.y + room.heigth < -ROOM_CUT_OFF
         room.unload()
         toRemove.push(i)
-        @_rooms.push(room) unless room.name is 'topRoom'
         
     # remove them
     while toRemove.length > 0
       index = toRemove.pop()
-      @activeRooms.splice(i, 1)
+      @activeRooms.splice(index, 1)
+
 
   doCountdown: () =>
     x = @game.canvas.width * 0.5 
     y = @game.canvas.height * 0.3
-    @countdownText = new PIXI.Text("#{@countdownNum}", {font: '50px Arial', fill: 'white' })
+    textStyle = {
+      font: '50px Arial'
+      fill: '#F7E68A' 
+      stroke: "#5C5821"
+      strokeThickness: 4
+    }
+    @countdownText = new PIXI.Text("#{@countdownNum}", textStyle)
     @countdownText.anchor.x = 0.5
+    @countdownText.anchor.y = 0.5
     @countdownText.position.x = x
     @countdownText.position.y = y
-    @runText = new PIXI.Text("Run", {font: '50px Arial', fill: 'white' })
+
+    @runText = new PIXI.Text("Run", textStyle)
     @runText.anchor.x = 0.5
     @runText.position.x = x
     @runText.position.y = y
 
-    @foreground.addChild(@countdownText)
+    @game.stage.addChild(@countdownText)
     @displayCountdown()
 
 
   displayCountdown: () =>
     if @countdownNum is 0
-      @foreground.removeChild(@countdownText)
-      @foreground.addChild(@runText)
-      @countdownNum = 5
-      @countDownComplete = true
+      @game.stage.removeChild(@countdownText)
+      @game.stage.addChild(@runText)
+      @countdownComplete = true
       setTimeout () =>
-          @foreground.removeChild(@runText)
+          @game.stage.removeChild(@runText)
         , 500
 
     else
       @countdownText.setText("#{@countdownNum}")
+      @countdownText.scale.x = 1
+      @countdownText.scale.y = 1
       setTimeout () =>
           @countdownNum -= 1
           @displayCountdown()
@@ -214,23 +246,24 @@ class @GGJScene extends Scene
   # Go Through the RUN State behaviour
   # 
   ###
-  doRunState: (delta) =>
+  doRunState: () =>
     for i in [0..@activeRooms.length] by 1
       room = @activeRooms[i]
       continue unless room
-      room.y -= RUN_SPEED * delta
-      room.update(delta)
-
+      dy = @currentSpeed
+      @distance += dy
+      room.y -= dy
+      room.update()
 
     if @game.input.current[@game.input.KEY['W']] or @game.input.current[@game.input.KEY['ARROW_UP']]
-      @player.y -= MOVE_SPEED * delta
+      @player.y -= @currentSpeed
     else if @game.input.current[@game.input.KEY['S']] or @game.input.current[@game.input.KEY['ARROW_DOWN']]
-      @player.y += MOVE_SPEED * delta
+      @player.y += MOVE_SPEED
 
     if @game.input.current[@game.input.KEY['A']] or @game.input.current[@game.input.KEY['ARROW_LEFT']]
-      @player.x -= MOVE_SPEED * delta
+      @player.x -= MOVE_SPEED
     else if @game.input.current[@game.input.KEY['D']] or @game.input.current[@game.input.KEY['ARROW_RIGHT']]
-      @player.x += MOVE_SPEED * delta
+      @player.x += MOVE_SPEED
 
 
     if @game.input.mouseDown or @game.input.touch
@@ -245,10 +278,10 @@ class @GGJScene extends Scene
         deltaXNorm = deltaX / distance
         deltaYNorm = deltaY / distance
         @moveSpeed = BOOST_SPEED if distanceSquared > BOOST_THREASHOLD
-        @player.x += deltaXNorm * @moveSpeed * delta
-        @player.y += deltaYNorm * @moveSpeed * delta
+        @player.x += deltaXNorm * @moveSpeed
+        @player.y += deltaYNorm * @moveSpeed
 
-    @player.update(delta)
+    @player.update()
 
     for i in [0..@activeRooms.length] by 1
       room = @activeRooms[i]
@@ -256,7 +289,27 @@ class @GGJScene extends Scene
       bounds = @player.getAABB()
 
       if room.collisionTest(bounds)
-        room.resolveCollision(@player)
+        px = 0
+        py = 0
+        if room.doCollision(@player, @collisionsData)
+          while @collisionsData.length > 0
+            data = @collisionsData.pop()
+            switch data.type
+              when 'hole'
+                if Math.abs(data.px) > TILE_SIZE or Math.abs(data.py) > TILE_SIZE
+                  @state = STATES.RESET
+              else
+                px = if px is 0 then data.px else if data.px isnt 0 then Math.min(data.px, px) else px
+                py = if py is 0 then data.py else if data.py isnt 0 then Math.min(data.py, py) else py
+          @player.x -= px
+          @player.y -= py
+
+
+  addRoom: (y) =>
+    newRoom = Random.inHash(@rooms).clone()
+    newRoom.y = y
+    newRoom.ready()
+    @activeRooms.push(newRoom)
 
 
   toggleHideRooms: () =>
@@ -265,12 +318,12 @@ class @GGJScene extends Scene
       r = @activeRooms[i]
       if @hideRooms
         @background.removeChild(r.background)
-        @background.removeChild(r.walls)
-        @stage.removeChild(r.sprites)
+        @stage.removeChild(r.walls)
+        @foreground.removeChild(r.foreground)
       else
         @background.addChild(r.background)
-        @background.addChild(r.walls)
-        @stage.addChild(r.sprites)
+        @stage.addChild(r.walls)
+        @foreground.addChild(r.foreground)
 
 
 pos = null
