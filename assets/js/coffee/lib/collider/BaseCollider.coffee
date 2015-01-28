@@ -32,17 +32,10 @@ class @BaseCollider
     return false
 
 
-cx = 0
-cy = 0
-
-
 Object.defineProperty BaseCollider::, "x",
   get: -> 
-    cx = @entity.x + (@entity.width * @entity.scale.x * 0.5)
-    return cx + @offset.x
+    return @entity.centerX + @offset.x
 
 Object.defineProperty BaseCollider::, "y",
   get: -> 
-    cy = @entity.y + (@entity.height * @entity.scale.y * 0.5)
-    return cy + @offset.y
-    
+    return @entity.centerY + @offset.y

@@ -20,6 +20,7 @@ class @Entity
   _y: 0
   _width: 0
   _height: 0
+  _anchor: {x: 0, y: 0}
   _scale: {x: 1, y: 1}
 
 
@@ -27,18 +28,28 @@ class @Entity
   # Constructor
   # 
   constructor: (@name, @game, @scene) ->
-    return console.warn 'Entitiy needs game to function.' unless @game
+    return console.warn 'Entity needs game to function.' unless @game
     @init()
 
 
   init: () =>
-    #setup anything that should onyl happen once
+    # setup anything that should onyl happen once
 
   ready: () =>
-    #setup stuff that can be unlaoded later
+    # setup stuff that can be unlaoded later
 
   unload: () =>
-    #reverse the values that were set in init
+    # reset anything that was done in the ready
+
+  resetValues: () =>
+    @_x = 0
+    @_y = 0
+    @_width = 0
+    @_height = 0
+    @_anchor.x = 0
+    @_anchor.y = 0
+    @_scale.x = 1
+    @_scale.y = 1
 
   update: (delta) =>
     # update loop for changing state
@@ -76,10 +87,20 @@ class @Entity
   _setHeight: (value) =>
     return @_height = value
 
+  _getAnchor: () =>
+    return @_anchor
+  _setAnchor: (value) =>
+    return @_anchor = value
+
   _getScale: () =>
     return @_scale
   _setScale: (value) =>
     return @_scale = value
+
+  _getCenterX: () =>
+    return @x + ((0.5 - @anchor.x) * @width * @scale.x)
+  _getCenterY: () =>
+    return @y + ((0.5 - @anchor.y) * @height * @scale.y)
 
 
 Object.defineProperty Entity::, "x",
@@ -106,10 +127,24 @@ Object.defineProperty Entity::, "height",
   set: (value) -> 
     return @_setHeight(value)
 
+Object.defineProperty Entity::, "anchor",
+  get: ->
+    return @_getAnchor()
+  set: (value) ->
+    return @_setAnchor(value)
+
 Object.defineProperty Entity::, "scale",
   get: ->
     return @_getScale()
   set: (value) ->
     return @_setScale(value)
+
+Object.defineProperty Entity::, "centerX",
+  get: -> 
+    return @_getCenterX()
+
+Object.defineProperty Entity::, "centerY",
+  get: -> 
+    return @_getCenterY()
 
     

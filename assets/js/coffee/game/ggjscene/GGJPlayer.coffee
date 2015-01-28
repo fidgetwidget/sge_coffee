@@ -15,14 +15,15 @@ class @GGJPlayer extends Entity
     @collider = new BoxCollider(this)
     @collider.width = 16
     @collider.height = 16
+    @collider.offset.y = -8
     
 
   ready: () =>
     @sprite = PIXI.Sprite.fromFrame('player')
     @sprite.anchor.x = 0.5
-    @sprite.anchor.y = 0.5
-    @x = (@game.canvas.width * 0.5) - (@sprite.width * 0.5)
-    @y = (@game.canvas.height * 0.5) - (@sprite.height * 0.5)
+    @sprite.anchor.y = 1
+    @x = (@game.canvas.width * 0.5)
+    @y = (@game.canvas.height * 0.5)
     @sprite.x = @x
     @sprite.y = @y
     @scene.stage.addChild(@sprite)
@@ -37,3 +38,7 @@ class @GGJPlayer extends Entity
     @sprite.x = @x
     @sprite.y = @y
     # change animation if state changed
+
+
+  die: () =>
+    @scene.reset()
