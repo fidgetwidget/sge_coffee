@@ -60,10 +60,9 @@ class @GGJScene extends Scene
     @g = new PIXI.Graphics()
     @player = new GGJPlayer(@game, this)
 
+    # We want to store this one differently
     @topRoom = new GGJRoom('topRoom', @game, this)
-    @topRoom.isFirstRoom = true
-    @topRoom.high = 24
-
+    # Make the other room types
     for type in ROOM_TYPES
       @rooms[type] = new GGJRoom(type, @game, this) 
 
@@ -88,25 +87,39 @@ class @GGJScene extends Scene
     @addChild(@background)
     @addChild(@midground)
     @addChild(@foreground)
-    @addChild(@g) 
+    @addChild(@g)
 
-    @topRoom.x = 0
     @topRoom.y = 0
     @topRoom.ready()
     @activeRooms.push(@topRoom)
 
     @player.ready()
     @currentSpeed = INIT_SPEED
+    @state = STATES.RUN
     @isReady = true
     @distance = 0
-    @doCountdown()
+    @readyCountdown()
+    textStyle = {
+      font: '50px Arial'
+      fill: '#F7E68A' 
+      stroke: "#5C5821"
+      strokeThickness: 4
+    }
+    @gameoverText = new PIXI.Text("Game Over.", textStyle)
+    @gameoverText.anchor.x = 0.5
+    @gameoverText.anchor.y = 0.5
+    @gameoverText.x = @game.canvas.width * 0.5
+    @gameoverText.y = @game.canvas.height * 0.5
     
 
   unload: () =>
     @isReady = false
     @countdownComplete = false
     @countdownNum = 3
-    
+
+    @foreground.removeChild(@gameoverText)
+
+    @player.unload()
     @removeChild(@background)
     @removeChild(@midground)
     @removeChild(@foreground)
@@ -117,7 +130,7 @@ class @GGJScene extends Scene
     @game.stage.removeChild(this)
 
     while @activeRooms.length > 0
-      @activeRooms.pop()
+      @activeRooms.pop().unload()
   
 
   reset: () =>
@@ -129,10 +142,11 @@ class @GGJScene extends Scene
   update: () =>
     return unless @isReady
 
-    if @game.input.release[@game.input.KEY['SPACEBAR']]
-      if @state is STATES.RESET
-        return @reset()
+    if @state is STATES.RESET
+      return @reset() if @game.input.mouseDown or @game.input.touch or @game.input.release[@game.input.KEY['SPACEBAR']]
 
+
+    if @game.input.release[@game.input.KEY['SPACEBAR']]
       @state = if @state is STATES.RUN then STATES.PAUSE else STATES.RUN
 
     if @game.input.release[@game.input.KEY['0']]
@@ -190,7 +204,7 @@ class @GGJScene extends Scene
       @activeRooms.splice(index, 1)
 
 
-  doCountdown: () =>
+  readyCountdown: () =>
     x = @game.canvas.width * 0.5 
     y = @game.canvas.height * 0.3
     textStyle = {
@@ -289,12 +303,17 @@ class @GGJScene extends Scene
             switch data.type
               when 'hole'
                 if Math.abs(data.px) > TILE_SIZE or Math.abs(data.py) > TILE_SIZE
-                  @state = STATES.RESET
+                  @doGameOver()
               else
                 px = if px is 0 then data.px else if data.px isnt 0 then Math.min(data.px, px) else px
                 py = if py is 0 then data.py else if data.py isnt 0 then Math.min(data.py, py) else py
           @player.x -= px
           @player.y -= py
+
+
+  doGameOver: () =>
+    @state = STATES.RESET
+    @foreground.addChild(@gameoverText)
 
 
   addRoom: (y) =>

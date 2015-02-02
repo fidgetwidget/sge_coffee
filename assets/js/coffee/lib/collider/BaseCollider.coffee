@@ -30,9 +30,15 @@ class @BaseCollider
     @offset = new PIXI.Point()
     @_aabb = new AABB()
 
+
+  unload: () ->
+    @entity = null
+    @offset = null
+    @_aabb = null
+
+
   testAABB: (aabb) => 
     return false
-    
 
   collideAABB: (aabb) => 
     return false

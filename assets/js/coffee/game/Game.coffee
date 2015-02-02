@@ -23,5 +23,5 @@ class @Game extends Engine
     @scenes.add(pathTestScene)
     @scenes.add(tilesTestScene)
     @scenes.add(ggjScene)
-    window.scene = @scenes.ready('pathTestScene')
+    window.scene = @scenes.ready('ggjScene')
 

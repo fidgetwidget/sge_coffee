@@ -20,18 +20,21 @@ class @AABB
   get width: ->   return @w * 2
   get height: ->  return @h * 2
 
-
+  # 
+  # 
   constructor: () ->
     @x = 0
     @y = 0
     @w = 0
     @h = 0
 
-
+  # 
+  # 
   testPoint: (x, y) ->
     return (x <= @x + @w and x >= @x - @w) and (y <= @y + @h and y >= @y - @h)
 
-
+  # 
+  # 
   testAABB: (aabb) ->
     tx = aabb.x
     ty = aabb.y
@@ -50,7 +53,8 @@ class @AABB
 
     return true
 
-
+  # 
+  # 
   collideAABB: (aabb) ->
     tx = aabb.x
     ty = aabb.y
@@ -85,7 +89,7 @@ class @AABB
   # 
   # Factory Methods for making an AABB
   # 
-  
+
   @fromValues: (x, y, width, height) ->
     aabb = new AABB()
     w = width * 0.5
@@ -105,16 +109,3 @@ class @AABB
     aabb.h = h
     aabb.w = w
     return aabb
-
-
-
-# TODO: move these to global variables for better memory use
-tx = 0
-ty = 0
-tw = 0
-th = 0
-dx = 0
-px = 0
-dy = 0
-py = 0
-l = 0

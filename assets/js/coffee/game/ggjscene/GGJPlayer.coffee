@@ -19,7 +19,7 @@ class @GGJPlayer extends Entity
     
 
   ready: () =>
-    @sprite = PIXI.Sprite.fromFrame('player')
+    @sprite ?= PIXI.Sprite.fromFrame('player')
     @sprite.anchor.x = 0.5
     @sprite.anchor.y = 1
     @x = (@game.canvas.width * 0.5)
@@ -28,6 +28,10 @@ class @GGJPlayer extends Entity
     @sprite.y = @y
     @scene.midground.addChild(@sprite)
     @isReady = true
+
+  unload: () =>
+    @scene.midground.removeChild(@sprite)
+    @isReady = false
 
 
   update: () =>

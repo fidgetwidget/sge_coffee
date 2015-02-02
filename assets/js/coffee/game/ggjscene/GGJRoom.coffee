@@ -11,7 +11,6 @@ class @GGJRoom extends Entity
   high: MIN_HIGH
   colliders: undefined
   canvasWidth: 0
-  isFirstRoom: false
   baseInit: false
   background: undefined
   midground: undefined
@@ -38,8 +37,6 @@ class @GGJRoom extends Entity
     @scene.midground.addChild(@midground)
     @scene.foreground.addChild(@foreground)
 
-    @initBase() unless @baseInit
-
     switch @name
       when 'empty'
         @high = 6 * Random.intBetween(1, 3)
@@ -47,6 +44,10 @@ class @GGJRoom extends Entity
         @high = 6
       when 'hole'
         @high = 6
+      when 'topRoom'
+        @high = 24
+
+    @initBase()
 
     switch @name
 
@@ -98,7 +99,7 @@ class @GGJRoom extends Entity
     @background.addChild(lbg)
     @background.addChild(rbg)
 
-    if @isFirstRoom
+    if @name is 'topRoom'
       lw = new PIXI.TilingSprite(lwt, lwt.width, @height - TOP_HEIGHT)
       rw = new PIXI.TilingSprite(rwt, rwt.width, @height - TOP_HEIGHT)
       lw.position.y = TOP_HEIGHT
@@ -116,12 +117,12 @@ class @GGJRoom extends Entity
     @background.addChild(lw)
     @background.addChild(rw)
 
-    if @isFirstRoom
+    if @name is 'topRoom'
       topPart = new PIXI.Sprite.fromFrame('templeTop.png')
       topPart.anchor.x = 0.5
       topPart.position.y = 0
       topPart.position.x = @canvasWidth * 0.5
-      @parts['templeTop'] = topPart
+      @parts.templeTop = topPart
       @background.addChild(topPart)
 
     sideWidth = OFFSIDE_WIDTH + rwt.width
@@ -130,10 +131,10 @@ class @GGJRoom extends Entity
     rCollider = BoxCollider.fromValues(this, xoffset, 0, sideWidth, @height) 
     @colliders.wall.push(lCollider)
     @colliders.wall.push(rCollider)
-    @baseInit = true
 
 
   unload: () =>
+
     while @parts.wall.length > 0
       @parts.wall.pop().unload()
     while @parts.hole.length > 0
